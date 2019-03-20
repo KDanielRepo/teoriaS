@@ -19,12 +19,16 @@ public class BmiUI implements ActionListener {
     JFrame ramka = new JFrame("Kalkulator BMI");
     JButton m = new JButton("Mężczyzna");
     JButton k = new JButton("Kobieta");
+    Color bg = new Color(200,200,200);
     JFXPanel wykres = new JFXPanel();
     GridBagConstraints layout = new GridBagConstraints();
     JTextField wiek = new JTextField();
     JTextField wzrost = new JTextField();
     JTextField waga = new JTextField();
-    JLabel wiekL = new JLabel("Podaj swój wiek:");
+    JTextField imie = new JTextField();
+    JLabel imieL  = new JLabel(" Podaj imię: ");
+    JButton save = new JButton("Zapisz");
+    JLabel wiekL = new JLabel("Podaj wiek:");
     JLabel wagaL = new JLabel("Podaj wagę:");
     JLabel wzrostL = new JLabel("Podaj swój wzrosc (w metrach):");
     JButton obicz = new JButton("OBLICZ BMI");
@@ -32,11 +36,16 @@ public class BmiUI implements ActionListener {
     JButton test = new JButton();
     JLabel ciaza = new JLabel("Czy jest Pani w ciąży?");
     JTextField odpowiedz = new JTextField();
+    JButton show = new JButton("Wykres");
+    Dimension centrum = Toolkit.getDefaultToolkit().getScreenSize();
 
     public void calosc() {
+        File czek = new File("./test.txt");
+        if(!czek.exists()){
+            first();
+        }
         ramka.setLayout(new GridBagLayout());
         ramka.setSize(500, 500);
-        Dimension centrum = Toolkit.getDefaultToolkit().getScreenSize();
         ramka.setLocation(((int) centrum.getWidth() / 2) - 250, ((int) centrum.getHeight() / 2) - 250);
         ramka.addWindowListener(new WindowAdapter() {
             @Override
@@ -48,62 +57,92 @@ public class BmiUI implements ActionListener {
 
 
         layout.fill = GridBagConstraints.BOTH;
-        layout.insets = new Insets(0, 0, 10, 10);
+        layout.insets = new Insets(0, 0, 0, 0);
         obicz.addActionListener(this);
-        layout.gridheight = 2;
-        setWyglad(0, 50, 2, 4);
+        setWyglad(0, 20, 2, 3);
         ramka.add(obicz, layout);
 
 
         layout.fill = GridBagConstraints.BOTH;
         layout.gridheight = 2;
         layout.gridwidth = 2;
-        setWyglad(0, 0, 0, 4);
+        setWyglad(0, 40, 0, 2);
+        wynik.setBackground(bg);
         ramka.add(wynik, layout);
         wynik.setEditable(false);
 
-        layout.gridwidth = 1;
-        m.addActionListener(this);
-        layout.gridheight = 2;
-        setWyglad(0, 0, 1, 0);
-        ramka.add(m, layout);
 
-        k.addActionListener(this);
-        layout.gridheight = 2;
-        setWyglad(100, 0, 2, 0);
-        ramka.add(k, layout);
-
+        show.addActionListener(this);
         layout.gridheight = 1;
+        layout.gridwidth = 1;
+        setWyglad(0, 20, 2, 2);
+        ramka.add(show, layout);
+
         ciaza.setVisible(false);
         layout.fill = GridBagConstraints.HORIZONTAL;
-        setWyglad(0, 0, 2, 2);
+        setWyglad(0, 20, 2, 0);
         ramka.add(ciaza, layout);
 
         layout.fill = GridBagConstraints.BOTH;
         odpowiedz.setVisible(false);
-        setWyglad(0, 50, 2, 3);
+        setWyglad(0,20, 2, 1);
         ramka.add(odpowiedz, layout);
 
-        layout.gridheight = 1;
-        setWyglad(0, 50, 0, 1);
+        setWyglad(0, 20, 0, 1);
         ramka.add(wiek, layout);
         layout.fill = GridBagConstraints.HORIZONTAL;
+        wiekL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
         setWyglad(0, 0, 0, 0);
         ramka.add(wiekL, layout);
 
-        layout.fill = GridBagConstraints.BOTH;
-        setWyglad(0, 50, 1, 3);
-        ramka.add(wzrost, layout);
-        layout.fill = GridBagConstraints.HORIZONTAL;
-        setWyglad(0, 0, 1, 2);
-        ramka.add(wzrostL, layout);
 
         layout.fill = GridBagConstraints.BOTH;
-        setWyglad(0, 0, 0, 3);
+        setWyglad(0, 20, 1, 1);
         ramka.add(waga, layout);
         layout.fill = GridBagConstraints.HORIZONTAL;
-        setWyglad(0, 0, 0, 2);
+        wagaL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
+        setWyglad(0, 0, 1, 0);
         ramka.add(wagaL, layout);
+
+
+    }
+    public void first(){
+        ramka.setLayout(new GridBagLayout());
+        ramka.setSize(300, 300);
+        ramka.setLocation(((int) centrum.getWidth() / 2) - 100, ((int) centrum.getHeight() / 2) - 120);
+        ramka.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+        ramka.setVisible(true);
+
+        layout.fill = GridBagConstraints.HORIZONTAL;
+        setWyglad(0, 0, 0, 0);
+        layout.gridwidth = 2;
+        imieL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
+        ramka.add(imieL, layout);
+
+        layout.fill = GridBagConstraints.HORIZONTAL;
+        setWyglad(0, 15, 2, 0);
+        layout.gridwidth = 2;
+        ramka.add(imie, layout);
+
+        m.addActionListener(this);
+        setWyglad(50, 30, 2, 1);
+        ramka.add(m, layout);
+
+        k.addActionListener(this);
+        setWyglad(50, 30, 0, 1);
+        ramka.add(k, layout);
+
+        layout.fill = GridBagConstraints.BOTH;
+        layout.gridwidth = 3;
+        layout.insets = new Insets(0, 0, 0, 0);
+        setWyglad(0, 30, 1, 2);
+        ramka.add(save, layout);
+
     }
     public void wykresy(){
         Platform.runLater(new Runnable() {
@@ -141,6 +180,7 @@ public class BmiUI implements ActionListener {
                 frame.add(wykres);
                 frame.setVisible(true);
                 frame.setSize(500,500);
+                frame.setLocation(((int) centrum.getWidth() / 2) + 235, ((int) centrum.getHeight() / 2) - 250);
             }
         });
     }
@@ -177,7 +217,7 @@ public class BmiUI implements ActionListener {
                         wynik.setText( " BMI dla kobiet w ciąży nie powinno być obliczane.");
                     } else if (odpowiedz.getText().toUpperCase().equals("NIE")|odpowiedz.getText().toUpperCase().equals("N")|odpowiedz.getText().isEmpty()){
                         return;
-                     }else{
+                    } else {
                         wynik.setText("Prosimy o poprawne uzupełnienie danych na temat ewentualnej ciąży.");
                     }
                 }
@@ -191,6 +231,15 @@ public class BmiUI implements ActionListener {
                 odpowiedz.setVisible(false);
                 odpowiedz.setText(null);
                 break;
+            case "Wykres":
+                wykresy();
+                break;
+            case "Zapisz":
+                try{
+                    FileWriter filewriter = new FileWriter("./test.txt");
+                }catch (IOException e1){
+                    e1.printStackTrace();
+                }break;
         }
     }
 
