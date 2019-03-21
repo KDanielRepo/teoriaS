@@ -8,29 +8,33 @@ import javafx.stage.Stage;
 
 import javax.print.attribute.standard.NumberUp;
 import javax.swing.*;
+import javax.swing.text.DateFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class BmiUI implements ActionListener {
-    JFrame ramka = new JFrame("Kalkulator BMI");
+    JFrame ramka;
     JButton m = new JButton("Mężczyzna");
     JButton k = new JButton("Kobieta");
-    Color bg = new Color(200,200,200);
+    Color bg = new Color(220,220,220);
     JFXPanel wykres = new JFXPanel();
     GridBagConstraints layout = new GridBagConstraints();
-    JTextField wiek = new JTextField();
     JTextField wzrost = new JTextField();
-    JTextField waga = new JTextField();
+    JLabel wzrostL = new JLabel("Podaj wzrost:");
     JTextField imie = new JTextField();
     JLabel imieL  = new JLabel(" Podaj imię: ");
     JButton save = new JButton("Zapisz");
+    JTextField wiek = new JTextField();
     JLabel wiekL = new JLabel("Podaj wiek:");
+    JTextField waga = new JTextField();
     JLabel wagaL = new JLabel("Podaj wagę:");
-    JLabel wzrostL = new JLabel("Podaj swój wzrosc (w metrach):");
     JButton obicz = new JButton("OBLICZ BMI");
     JTextArea wynik = new JTextArea();
     JButton test = new JButton();
@@ -38,75 +42,99 @@ public class BmiUI implements ActionListener {
     JTextField odpowiedz = new JTextField();
     JButton show = new JButton("Wykres");
     Dimension centrum = Toolkit.getDefaultToolkit().getScreenSize();
+    String plec;
+    int linijka = 0;
+    float ile;
 
     public void calosc() {
         File czek = new File("./test.txt");
         if(!czek.exists()){
             first();
-        }
-        ramka.setLayout(new GridBagLayout());
-        ramka.setSize(500, 500);
-        ramka.setLocation(((int) centrum.getWidth() / 2) - 250, ((int) centrum.getHeight() / 2) - 250);
-        ramka.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
+        }else{
+            try{
+                FileReader fileReader = new FileReader("./test.txt");
+                BufferedReader bufferedReader =  new BufferedReader(fileReader);
+                imie.setText( bufferedReader.readLine());
+                wzrost.setText(bufferedReader.readLine());
+                plec = bufferedReader.readLine();
+                System.out.println(imie.getText()+" , "+wzrost.getText()+" ,"+plec);
+                if(plec.equals("Kobieta")){
+                    ciaza.setVisible(true);
+                    odpowiedz.setVisible(true);
+                }else {
+                    ciaza.setVisible(false);
+                    odpowiedz.setVisible(false);
+                }
+                bufferedReader.close();
+            }catch (IOException e){
+                e.printStackTrace();
             }
-        });
-        ramka.setVisible(true);
+            ramka = new JFrame("Kalkulator BMI");
+            ramka.setLayout(new GridBagLayout());
+            ramka.setSize(500, 500);
+            ramka.setLocation(((int) centrum.getWidth() / 2) - 250, ((int) centrum.getHeight() / 2) - 250);
+            ramka.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    System.exit(0);
+                }
+            });
+            ramka.setVisible(true);
 
 
-        layout.fill = GridBagConstraints.BOTH;
-        layout.insets = new Insets(0, 0, 0, 0);
-        obicz.addActionListener(this);
-        setWyglad(0, 20, 2, 3);
-        ramka.add(obicz, layout);
+            layout.fill = GridBagConstraints.BOTH;
+            layout.insets = new Insets(0, 0, 0, 0);
+            obicz.addActionListener(this);
+            setWyglad(0, 50, 2, 3);
+            ramka.add(obicz, layout);
 
 
-        layout.fill = GridBagConstraints.BOTH;
-        layout.gridheight = 2;
-        layout.gridwidth = 2;
-        setWyglad(0, 40, 0, 2);
-        wynik.setBackground(bg);
-        ramka.add(wynik, layout);
-        wynik.setEditable(false);
+            layout.fill = GridBagConstraints.BOTH;
+            layout.gridheight = 2;
+            layout.gridwidth = 2;
+            setWyglad(0, 100, 0, 2);
+            wynik.setBackground(bg);
+            wynik.setFont(new Font("New Times Roma", Font.PLAIN, 15));
+            ramka.add(wynik, layout);
+            wynik.setEditable(false);
 
 
-        show.addActionListener(this);
-        layout.gridheight = 1;
-        layout.gridwidth = 1;
-        setWyglad(0, 20, 2, 2);
-        ramka.add(show, layout);
+            show.addActionListener(this);
+            layout.gridheight = 1;
+            layout.gridwidth = 1;
+            setWyglad(0, 50, 2, 2);
+            ramka.add(show, layout);
 
-        ciaza.setVisible(false);
-        layout.fill = GridBagConstraints.HORIZONTAL;
-        setWyglad(0, 20, 2, 0);
-        ramka.add(ciaza, layout);
+            layout.fill = GridBagConstraints.HORIZONTAL;
+            setWyglad(0, 20, 2, 0);
+            ramka.add(ciaza, layout);
 
-        layout.fill = GridBagConstraints.BOTH;
-        odpowiedz.setVisible(false);
-        setWyglad(0,20, 2, 1);
-        ramka.add(odpowiedz, layout);
+            layout.fill = GridBagConstraints.BOTH;
+            setWyglad(50, 20, 2, 1);
+            ramka.add(odpowiedz, layout);
 
-        setWyglad(0, 20, 0, 1);
-        ramka.add(wiek, layout);
-        layout.fill = GridBagConstraints.HORIZONTAL;
-        wiekL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
-        setWyglad(0, 0, 0, 0);
-        ramka.add(wiekL, layout);
-
-
-        layout.fill = GridBagConstraints.BOTH;
-        setWyglad(0, 20, 1, 1);
-        ramka.add(waga, layout);
-        layout.fill = GridBagConstraints.HORIZONTAL;
-        wagaL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
-        setWyglad(0, 0, 1, 0);
-        ramka.add(wagaL, layout);
+            setWyglad(0, 20, 0, 1);
+            ramka.add(wiek, layout);
+            layout.fill = GridBagConstraints.HORIZONTAL;
+            wiek.setFont(new Font("New Times Roma", Font.PLAIN, 15));
+            wiekL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
+            setWyglad(50, 0, 0, 0);
+            ramka.add(wiekL, layout);
 
 
+            layout.fill = GridBagConstraints.BOTH;
+            setWyglad(50, 20, 1, 1);
+            ramka.add(waga, layout);
+            layout.fill = GridBagConstraints.HORIZONTAL;
+            waga.setFont(new Font("New Times Roma", Font.PLAIN, 15));
+            wagaL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
+            setWyglad(50, 0, 1, 0);
+            ramka.add(wagaL, layout);
+
+        }
     }
     public void first(){
+        ramka = new JFrame("Kalkulator BMI");
         ramka.setLayout(new GridBagLayout());
         ramka.setSize(300, 300);
         ramka.setLocation(((int) centrum.getWidth() / 2) - 100, ((int) centrum.getHeight() / 2) - 120);
@@ -119,28 +147,40 @@ public class BmiUI implements ActionListener {
         ramka.setVisible(true);
 
         layout.fill = GridBagConstraints.HORIZONTAL;
-        setWyglad(0, 0, 0, 0);
+        setWyglad(80, 0, 0, 0);
         layout.gridwidth = 2;
         imieL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
         ramka.add(imieL, layout);
-
-        layout.fill = GridBagConstraints.HORIZONTAL;
-        setWyglad(0, 15, 2, 0);
-        layout.gridwidth = 2;
+        layout.fill = GridBagConstraints.BOTH;
+        setWyglad(80, 15, 0, 1);
+        imie.setFont(new Font("New Times Roma", Font.PLAIN, 15));
         ramka.add(imie, layout);
 
+
+        layout.fill = GridBagConstraints.HORIZONTAL;
+        setWyglad(80, 0, 2, 0);
+        wzrostL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
+        ramka.add(wzrostL, layout);
+        layout.fill = GridBagConstraints.BOTH;
+        setWyglad(80, 15, 2, 1);
+        wzrost.setFont(new Font("New Times Roma", Font.PLAIN, 15));
+        ramka.add(wzrost, layout);
+
+
+
         m.addActionListener(this);
-        setWyglad(50, 30, 2, 1);
+        setWyglad(80, 30, 2, 2);
         ramka.add(m, layout);
 
         k.addActionListener(this);
-        setWyglad(50, 30, 0, 1);
+        setWyglad(80, 30, 0, 2);
         ramka.add(k, layout);
 
         layout.fill = GridBagConstraints.BOTH;
-        layout.gridwidth = 3;
+        layout.gridwidth=4;
+        save.addActionListener(this);
         layout.insets = new Insets(0, 0, 0, 0);
-        setWyglad(0, 30, 1, 2);
+        setWyglad(0, 30, 0, 3);
         ramka.add(save, layout);
 
     }
@@ -184,16 +224,33 @@ public class BmiUI implements ActionListener {
             }
         });
     }
+    public void doPliku(){
+        try{
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            Date date = new Date();
+            FileWriter fileWriter = new FileWriter("./test.txt",true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.newLine();
+            bufferedWriter.write(dateFormat.format(date));
+            bufferedWriter.newLine();
+            bufferedWriter.write(Float.toString(ile));
+            bufferedWriter.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         String spr = e.getActionCommand();
+        System.out.println(spr);
         switch (spr) {
             case "OBLICZ BMI":
-                float ile = Integer.parseInt(waga.getText()) / (Float.parseFloat(wzrost.getText()) * Float.parseFloat(wzrost.getText()));
+                ile = Integer.parseInt(waga.getText()) / (Float.parseFloat(wzrost.getText()) * Float.parseFloat(wzrost.getText()));
                 wynik.setWrapStyleWord(true);
                 wynik.setLineWrap(true);
                 wynik.setText("" + ile);
+                doPliku();
 
                 if (Integer.parseInt(wiek.getText()) < 18) {
                     wynik.setText("Do 18 roku życia powinno się patrzeć na siatkę centylową do której potrzebny jest wynik BMI,który wynosi:   " + wynik.getText());
@@ -223,10 +280,12 @@ public class BmiUI implements ActionListener {
                 }
                 break;
             case "Kobieta":
+                plec = "Kobieta";
                 ciaza.setVisible(true);
                 odpowiedz.setVisible(true);
                 break;
             case "Mężczyzna":
+                plec = "Mężczyzna";
                 ciaza.setVisible(false);
                 odpowiedz.setVisible(false);
                 odpowiedz.setText(null);
@@ -237,9 +296,27 @@ public class BmiUI implements ActionListener {
             case "Zapisz":
                 try{
                     FileWriter filewriter = new FileWriter("./test.txt");
+                    BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
+                    bufferedWriter.write(imie.getText());
+                    bufferedWriter.newLine();
+                    bufferedWriter.write(wzrost.getText());
+                    bufferedWriter.newLine();
+                    bufferedWriter.write(plec);
+                    bufferedWriter.close();
+                    if(plec.equals("Kobieta")){
+                        ciaza.setVisible(true);
+                        odpowiedz.setVisible(true);
+                    }
+                    else {
+                        ciaza.setVisible(false);
+                        odpowiedz.setVisible(false);
+                    }
                 }catch (IOException e1){
                     e1.printStackTrace();
-                }break;
+                }
+                ramka.dispose();
+                calosc();
+                break;
         }
     }
 
