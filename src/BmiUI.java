@@ -43,6 +43,7 @@ public class BmiUI implements ActionListener {
     JButton show = new JButton("Wykres");
     Dimension centrum = Toolkit.getDefaultToolkit().getScreenSize();
     String plec;
+    Color textColor = new Color(25,54,198);
     int linijka = 0;
     float ile;
 
@@ -85,14 +86,14 @@ public class BmiUI implements ActionListener {
             layout.fill = GridBagConstraints.BOTH;
             layout.insets = new Insets(0, 0, 0, 0);
             obicz.addActionListener(this);
-            setWyglad(0, 50, 2, 3);
+            setWyglad(0, 50, 2, 4);
             ramka.add(obicz, layout);
 
 
             layout.fill = GridBagConstraints.BOTH;
             layout.gridheight = 2;
             layout.gridwidth = 2;
-            setWyglad(0, 100, 0, 2);
+            setWyglad(0, 100, 0, 3);
             wynik.setBackground(bg);
             wynik.setFont(new Font("New Times Roma", Font.PLAIN, 15));
             ramka.add(wynik, layout);
@@ -102,35 +103,46 @@ public class BmiUI implements ActionListener {
             show.addActionListener(this);
             layout.gridheight = 1;
             layout.gridwidth = 1;
-            setWyglad(0, 50, 2, 2);
+            setWyglad(0, 50, 2, 3);
             ramka.add(show, layout);
 
             layout.fill = GridBagConstraints.HORIZONTAL;
-            setWyglad(0, 20, 2, 0);
+            setWyglad(0, 20, 2, 1);
             ramka.add(ciaza, layout);
 
             layout.fill = GridBagConstraints.BOTH;
-            setWyglad(50, 20, 2, 1);
+            setWyglad(50, 20, 2, 2);
             ramka.add(odpowiedz, layout);
 
-            setWyglad(0, 20, 0, 1);
+            setWyglad(0, 20, 0, 2);
             ramka.add(wiek, layout);
             layout.fill = GridBagConstraints.HORIZONTAL;
             wiek.setFont(new Font("New Times Roma", Font.PLAIN, 15));
             wiekL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
-            setWyglad(50, 0, 0, 0);
+            setWyglad(50, 0, 0, 1);
             ramka.add(wiekL, layout);
 
 
             layout.fill = GridBagConstraints.BOTH;
-            setWyglad(50, 20, 1, 1);
+            setWyglad(50, 20, 1, 2);
             ramka.add(waga, layout);
             layout.fill = GridBagConstraints.HORIZONTAL;
             waga.setFont(new Font("New Times Roma", Font.PLAIN, 15));
             wagaL.setFont(new Font("New Times Roma", Font.PLAIN, 18));
-            setWyglad(50, 0, 1, 0);
+            setWyglad(50, 0, 1, 1);
             ramka.add(wagaL, layout);
-
+            //fragment kodu napisany z pomocą Daniela Kuć
+            Canvas canvas = new Canvas(){
+              public void paint(Graphics g){
+                  g.setColor(textColor);
+                  g.setFont(new Font("New Times Roma", Font.PLAIN, 30));
+                  g.drawString("BMI",0,50);
+              }
+            };
+            canvas.setSize(50,80);
+            layout.fill = GridBagConstraints.BOTH;
+            setWyglad(0, 0, 1, 0);
+            ramka.add(canvas,layout);
         }
     }
     public void first(){
